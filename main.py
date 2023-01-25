@@ -1,10 +1,10 @@
-from database.database import Data
+from database.database import DataBase
 
 xml_base = list()
 
 if __name__ == '__main__':
-    new = Data()
-    new.create_base()
-    for elem in xml_base:
-        pass
+    db = DataBase()
+    db.database_initialization()
+    # db.insert_owner_value(elem_xml)
+    db.display()
 
