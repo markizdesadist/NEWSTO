@@ -267,9 +267,9 @@ class DataBase:
 			query.bindValue(':company_id', int(car_list[0]))
 			query.bindValue(':brand', car_list[1])
 			query.bindValue(':number', car_list[2])
-			query.bindValue(':uzm_code', int(car_list[3]))
-			query.bindValue(':year', car_list[4])
-			query.bindValue(':attachment', car_list[5])
+			query.bindValue(':uzm_code', car_list[3])
+			query.bindValue(':year', int(car_list[4]))
+			query.bindValue(':attachment', int(car_list[5]))
 			query.exec_()
 
 		except Exception as err:
@@ -375,8 +375,21 @@ if __name__ == '__main__':
 		['UBS', 'Ultr', '111111', 'Minsk', '2564444'],
 		['TAIM', 'TAIM', '777777777', 'Minsk', '2564444']
 	)
+	xml_list_car = (
+		[2, 'MAZ', '1234AA', '111111111111', '2007', '1'],
+		[1, 'KAMAZ', '1526BB', '222222222222', '2021', '2'],
+		[2, 'VOLVO', '1244AA', '333333333333', '2020', '2']
+	)
+	xml_list_order = (
+		['BAMS', 'BelAuto', '12365222224789', 'Minsk', '2564444'],
+		['UBS', 'Ultr', '111111', 'Minsk', '2564444'],
+		['TAIM', 'TAIM', '777777777', 'Minsk', '2564444']
+	)
 	db = DataBase()
 	db.database_initialise()
 	for elem in xml_list_owner:
 		db.input_owner(elem)
 	db.display_owner_for_name_or_id(0)
+	for elem in xml_list_car:
+		db.input_car(elem)
+	db.display_car_for_number_or_id(0)
