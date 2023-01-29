@@ -3,6 +3,7 @@ from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 import sys
 
 
+
 class DataBase:
 	"""
 	Класс инициализации базы данных Клиента, его автопарка и актов работ для СТО.
@@ -49,7 +50,7 @@ class DataBase:
 				           )
 			self.con.close()
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -79,7 +80,7 @@ class DataBase:
 			query.exec_()
 
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -111,7 +112,7 @@ class DataBase:
 			return temp_list
 
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -135,7 +136,7 @@ class DataBase:
 				           'FOREIGN KEY(company_id) REFERENCES owner_db(owner_id) ON DELETE CASCADE)')
 			self.con.close()
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -163,7 +164,7 @@ class DataBase:
 			query.exec_()
 
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -185,7 +186,7 @@ class DataBase:
 			self.con.open()
 			query = QSqlQuery()
 			query.exec(
-				'SELECT * FROM owner_db WHERE {} == {}'.format(
+				'SELECT * FROM driver_db WHERE {} == {}'.format(
 					'lastname' if isinstance(driver, str) else 'driver_id', driver))
 			temp_list = []
 			if query.isActive():
@@ -195,7 +196,7 @@ class DataBase:
 			return temp_list
 
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -216,7 +217,7 @@ class DataBase:
 				           'trailer TEXT DEFAULT "Прицеп"')
 			self.con.close()
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -229,20 +230,23 @@ class DataBase:
 		"""
 		try:
 			self.con.open()
-			query = QSqlQuery()
-			if 'car_db' not in self.con.tables():
-				query.exec('CREATE TABLE car_db (car_id INTEGER PRIMARY KEY AUTOINCREMENT,'
-				           'company_id INTEGER,'
-				           'FOREIGN KEY (company_id) REFERENCES owner_db (id) ON DELETE CASCADE,'
-				           'brand TEXT NOT NULL DEFAULT "Запчасти",'
-				           'number TEXT NOT NULL DEFAULT car_id UNIQUE,'
-				           'uzm_code TEXT NOT NULL DEFAULT "Запчасти",'
-				           'year INTEGER NULL,'
-				           'attachment INTEGER DEFAULT 2,'
-				           'FOREIGN KEY (attachment) REFERENCES attachment_db(attachment_id))')
-			self.con.close()
+			if self.con.isOpen():
+				query = QSqlQuery()
+				if 'car_db' not in self.con.tables():
+					query.exec('CREATE TABLE car_db (car_id INTEGER PRIMARY KEY AUTOINCREMENT,'
+					           'company_id INTEGER,'
+					           'FOREIGN KEY (company_id) REFERENCES owner_db (id) ON DELETE CASCADE,'
+					           'brand TEXT NOT NULL DEFAULT "Запчасти",'
+					           'number TEXT NOT NULL DEFAULT car_id UNIQUE,'
+					           'uzm_code TEXT NOT NULL DEFAULT "Запчасти",'
+					           'year INTEGER NULL,'
+					           'attachment INTEGER DEFAULT 2,'
+					           'FOREIGN KEY (attachment) REFERENCES attachment_db(attachment_id))')
+				self.con.close()
+			else:
+				print(self.con.lastError())
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -273,7 +277,7 @@ class DataBase:
 			query.exec_()
 
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -298,7 +302,7 @@ class DataBase:
 			self.con.open()
 			query = QSqlQuery()
 			query.exec(
-				'SELECT * FROM owner_db WHERE {} == {}'.format(
+				'SELECT * FROM car_db WHERE {} == {}'.format(
 					'number' if isinstance(car, str) else 'car_id', car))
 			temp_list = []
 			if query.isActive():
@@ -308,7 +312,7 @@ class DataBase:
 			return temp_list
 
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
@@ -321,75 +325,79 @@ class DataBase:
 		"""
 		try:
 			self.con.open()
-			query = QSqlQuery()
-			if 'order_db' not in self.con.tables():
-				query.exec('CREATE TABLE order_db (order_id INTEGER PRIMARY KEY AUTOINCREMENT,'
-				           'company_id INTEGER,'
-				           'FOREIGN KEY (company_id) REFERENCES owner_db (id) ON DELETE CASCADE,'
-				           'car_id INTEGER,'
-				           'FOREIGN KEY (car_id) REFERENCES car_db (id) ON DELETE CASCADE,'
-				           'car_mileage INTEGER DEFAULT 0,'
-				           'order_opening_data TEXT,'
-				           'order_closing_data TEXT NULL,'
-				           'driver_id INTEGER NULL,'
-				           'FOREIGN KEY (driver_id) REFERENCES driver_db (id) ON DELETE CASCADE,'
-				           'order_status BOOL DEFAULT TRUE,'
-				           'first_open BOOL DEFAULT TRUE,'
-				           'prefix TEXT DEFAULT "A")'
-				           )
-			self.con.close()
+			if self.con.isOpen():
+				query = QSqlQuery()
+				if 'order_db' not in self.con.tables():
+					query.exec('CREATE TABLE order_db (order_id INTEGER PRIMARY KEY AUTOINCREMENT,'
+					           'company_id INTEGER,'
+					           'FOREIGN KEY (company_id) REFERENCES owner_db (id) ON DELETE CASCADE,'
+					           'car_id INTEGER,'
+					           'FOREIGN KEY (car_id) REFERENCES car_db (id) ON DELETE CASCADE,'
+					           'car_mileage INTEGER DEFAULT 0,'
+					           'order_opening_data TEXT,'
+					           'order_closing_data TEXT NULL,'
+					           'driver_id INTEGER NULL,'
+					           'FOREIGN KEY (driver_id) REFERENCES driver_db (id) ON DELETE CASCADE,'
+					           'order_status BOOL DEFAULT TRUE,'
+					           'first_open BOOL DEFAULT TRUE,'
+					           'prefix TEXT DEFAULT "A")'
+					           )
+				self.con.close()
+			else:
+				print(self.con.lastError())
 		except Exception as err:
-			self.exeption_dialog(str(err))
+			self.exception_dialog(str(err))
 		finally:
 			self.con.close()
 
 	# _____________input order_____________
 	# _____________display order____________
 	# ===========================DISPLAY ERROR DIALOG====================================
-	@staticmethod
-	def exeption_dialog(error_text: str) -> None:
-		"""
-		Выводит на экран всплывающий диалог с ошибкой, или предупреждением
+	# @staticmethod
+def exception_dialog(error_text: str) -> None:
+	"""
+	Выводит на экран всплывающий диалог с ошибкой, или предупреждением
 
-		:param error_text: Текст ошибки или предупреждения
-		:return: None
-		"""
-		QMessageBox.critical(
-			None,
-			"App Name - Error!",
-			"Database Error: {}".format(error_text)
-		)
-		sys.exit(1)
+	:param error_text: Текст ошибки или предупреждения
+	:return: None
+	"""
+	QMessageBox.critical(
+		None,
+		"App Name - Error!",
+		"Database Error: {}".format(error_text)
+	)
+	sys.exit(1)
 
-		# Create the application's dialog window
-		win = QLabel("Connection Successfully Opened!")
-		win.setWindowTitle("App Name")
-		win.resize(200, 100)
-		win.show()
-		sys.exit(app.exec_())
+	# Create the application's dialog window
+	win = QLabel("Connection Successfully Opened!")
+	win.setWindowTitle("App Name")
+	win.resize(200, 100)
+	win.show()
+	sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
-	xml_list_owner = (
-		['BAMS', 'BelAuto', '12365222224789', 'Minsk', '2564444'],
-		['UBS', 'Ultr', '111111', 'Minsk', '2564444'],
-		['TAIM', 'TAIM', '777777777', 'Minsk', '2564444']
-	)
-	xml_list_car = (
-		[2, 'MAZ', '1234AA', '111111111111', '2007', '1'],
-		[1, 'KAMAZ', '1526BB', '222222222222', '2021', '2'],
-		[2, 'VOLVO', '1244AA', '333333333333', '2020', '2']
-	)
-	xml_list_order = (
-		['BAMS', 'BelAuto', '12365222224789', 'Minsk', '2564444'],
-		['UBS', 'Ultr', '111111', 'Minsk', '2564444'],
-		['TAIM', 'TAIM', '777777777', 'Minsk', '2564444']
-	)
-	db = DataBase()
-	db.database_initialise()
-	for elem in xml_list_owner:
-		db.input_owner(elem)
-	db.display_owner_for_name_or_id(0)
-	for elem in xml_list_car:
-		db.input_car(elem)
-	db.display_car_for_number_or_id(0)
+	# xml_list_owner = (
+	# 	['BAMS', 'BelAuto', '12365222224789', 'Minsk', '2564444'],
+	# 	['UBS', 'Ultr', '111111', 'Minsk', '2564444'],
+	# 	['TAIM', 'TAIM', '777777777', 'Minsk', '2564444']
+	# )
+	# xml_list_car = (
+	# 	[2, 'MAZ', '1234AA', '111111111111', '2007', '1'],
+	# 	[1, 'KAMAZ', '1526BB', '222222222222', '2021', '2'],
+	# 	[2, 'VOLVO', '1244AA', '333333333333', '2020', '2']
+	# )
+	# xml_list_order = (
+	# 	['BAMS', 'BelAuto', '12365222224789', 'Minsk', '2564444'],
+	# 	['UBS', 'Ultr', '111111', 'Minsk', '2564444'],
+	# 	['TAIM', 'TAIM', '777777777', 'Minsk', '2564444']
+	# )
+	# db = DataBase()
+	# db.database_initialise()
+	# for elem in xml_list_owner:
+	# 	db.input_owner(elem)
+	# db.display_owner_for_name_or_id(0)
+	# for elem in xml_list_car:
+	# 	db.input_car(elem)
+	# db.display_car_for_number_or_id(0)
+	exception_dialog('qweqwe')
