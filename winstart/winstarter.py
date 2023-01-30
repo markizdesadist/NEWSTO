@@ -14,7 +14,7 @@ from winstart.right_center_frame import ListClient, ListOrder, ListCar
 from winstart.button_frame import BtnSave, BtnExit, BtnPrint, BtnRefresh
 from winstart.upper_frame import Logo
 
-from setting import logger
+# from setting import logger
 import sys
 import os
 
@@ -84,7 +84,7 @@ class MainWindow(QtWidgets.QWidget):
         self.main_btn = QHBoxLayout(self.button_frame)
         self.right_main = QHBoxLayout()
 
-    @logger.logger.catch
+    # @logger.logger.catch
     def setting_window(self):
         """
         Настройки основного окна.
@@ -118,7 +118,7 @@ class MainWindow(QtWidgets.QWidget):
         y = (desktop.height() - self.height()) // 2
         self.move(x, y)"""
 
-    @logger.logger.catch
+    # @logger.logger.catch
     def ui_window(self):
         self.root_frame.insertLayout(0, self.commands.logo.set_frame())
         self.root_frame.insertLayout(1, self.center_frame)
@@ -193,7 +193,7 @@ class MainWindow(QtWidgets.QWidget):
 
 @splasher
 def start(win):
-    logger.logger.info(': Начал работу с программой.')
+    # logger.logger.info(': Начал работу с программой.')
     win.setting_window()
     win.show()
 

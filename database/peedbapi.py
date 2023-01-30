@@ -8,8 +8,10 @@ from logger_set import logger, message_error, message_done, wrapper_except
 from macros import switch_car_number
 from typing import Any
 from re import compile
+import os
+from os.path import exists
 
-db = SqliteDatabase('database.db')
+
 
 
 # =============TABLE MODULE==================
@@ -19,7 +21,7 @@ class BaseModel(Model):
 	"""
 
 	class Meta:
-		database = db
+		database = SqliteDatabase('database.db')
 
 
 class OwnerDB(BaseModel):
@@ -77,9 +79,8 @@ class AttachmentDB(BaseModel):
 	"""
 	Принадлежность автомобиля к группе (машина - 1 / прицеп - 2 / запчасти - 3)
 	"""
-	car = IntegerField(default=1)
-	trailer = IntegerField(default=2)
-	parts = IntegerField(default=3)
+	id = IntegerField(default=1)
+	attachment = TextField(null=False)
 
 	class Meta:
 		db_table = "attachment"
@@ -178,22 +179,39 @@ class DBAPI:
 	Класс создания скелета базы данных.
 	Предоставляет методы взаимодействия с базой данных.
 	"""
-
+	db = SqliteDatabase('database.db')
+	def __init__(self):
+		if not os.path.exists('database.db'):
+			self.database_initialization()
 	# ------------------------Create DB
 	@wrapper_except
 	def database_initialization(self) -> None:
 		"""
 		Создает скелет базы данных.
-		TODO: Инициализирует поле AttachmentDB
+		Инициализирует поле AttachmentDB
 
 		:return: None
 		"""
-		db.connect()
+
+		DBAPI.db.connect()
 		OwnerDB.create_table()
 		DriverDB.create_table()
 		AttachmentDB.create_table()
 		CarDB.create_table()
 		OrderDB.create_table()
+		self.set_attachment()
+
+	@classmethod
+	def set_attachment(cls):
+		AttachmentDB.create(
+			attachment='Автомобиль'
+		)
+		AttachmentDB.create(
+			attachment='Прицеп'
+		)
+		AttachmentDB.create(
+			attachment='Запчасть'
+		)
 
 	# ------------------------CLIENT
 	@wrapper_except
@@ -268,7 +286,7 @@ class DBAPI:
 	            number: str,
 	            uzm_code: str,
 	            year: [str, int],
-	            attachment: str,
+	            attachment: int,
 	            car_id: int = None) -> None:
 		"""
 		Устанавливает запись о машине клиента.
@@ -294,7 +312,9 @@ class DBAPI:
 				if model:
 					car.model = model.strip()
 				if number:
-					car.number = switch_car_number(number)
+					car.number = (switch_car_number(number=number, note_id=car_id, attachment=3)
+					              if (car.attachment == 3 or attachment == 3) else
+					              switch_car_number(number=number))
 				if uzm_code:
 					car.uzm_code = uzm_code.strip()
 				if year:
@@ -307,7 +327,9 @@ class DBAPI:
 					company_id=company_id,
 					brand=brand.strip(),
 					model=model.strip(),
-					number=switch_car_number(number),
+					number=(switch_car_number(number=number, note_id=car_id, attachment=3)
+					        if (attachment == 3) else
+					        switch_car_number(number=number)),
 					uzm_code=uzm_code.strip(),
 					year=str(year).strip(),
 					attachment=attachment

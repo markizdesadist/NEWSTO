@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore, Qt
 from PyQt5.QtWidgets import QWidget
 from winstart.wincammands import Command
 # from winstart.texttranslate import Retranslater
-from setting import logger
+# from setting import logger
 from datetime import datetime
 import winstart.order_frame
 
@@ -65,7 +65,7 @@ class Frame:
 
         self.btn_save = Button().btn_test('qweqweqwe')
 
-    @logger.logger.catch
+    # @logger.logger.catch
     def frame_logo(self):
         self.frame = QtWidgets.QFrame()
         self.frame.setMaximumHeight(50)
@@ -76,7 +76,7 @@ class Frame:
 
         return self.frame
 
-    @logger.logger.catch
+    # @logger.logger.catch
     def frame_btn(self):
 
         self.frame = QtWidgets.QFrame()
@@ -92,11 +92,11 @@ class Frame:
     #     self.frame.setStyleSheet("background-color: yellow")
     #     return self.frame
     #
-    @logger.logger.catch
+    # @logger.logger.catch
     def frame_left(self):
         pass
 
-    @logger.logger.catch
+    # @logger.logger.catch
     def frame_right(self):
         self.frame = QtWidgets.QFrame()
         self.frame.resize(300, 300)

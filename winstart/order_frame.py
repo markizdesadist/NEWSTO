@@ -49,7 +49,7 @@ class BaseTabFrame(ABC):
 
     @classmethod
     def set_maz_img(cls):
-        path_img = os.path.join('..', 'templatefiles', 'IMG_maz')
+        path_img = os.path.join('..', 'tempfile', 'IMG_maz')
         if not os.path.exists(path_img):
             os.mkdir(path_img)
 

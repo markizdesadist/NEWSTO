@@ -2,14 +2,22 @@ from logger_set import wrapper_except, message_error
 
 
 @wrapper_except
-def switch_car_number(number: str = '1234 AA-5') -> [str, int]:
+def switch_car_number(number: str, note_id: int = None, attribute: int = None) -> [str, int]:
 	"""
-	Подгоняет текст номера машины под шаблон 1234 AA-5. Меняет руские буквы на латинские в номере машины.
+	Подгоняет текст номера машины под шаблон 1234 AA-5. Меняет русские буквы на латинские в номере машины.
 	Если машина имеет номера другого государства, то возвращает его без форматирования.
 
 	:param number: Текстовое отображение номера машины
+	:param note_id: Id машины (запчасти для уникальности записи)
+	:param attribute: Принадлежность к "Запчастям" == 3
 	:return: форматированная строка номерного знака машины
 	"""
+	if attribute == 3:
+		return '{note_id}: {text}'.format(
+		note_id=note_id,
+		text=number.capitalize()
+	)
+
 	ru_alphabet = {
 		'А': 'A',
 		'В': 'B',
@@ -73,4 +81,4 @@ def switch_car_number(number: str = '1234 AA-5') -> [str, int]:
 
 
 if __name__ == '__main__':
-	pass
+	print(switch_car_number('RU text', 17, 3))
